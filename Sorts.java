@@ -1,87 +1,99 @@
-import processing.core.*; 
-import processing.data.*; 
-import processing.event.*; 
-import processing.opengl.*; 
+import java.util.*;
 
-import java.util.HashMap; 
-import java.util.ArrayList; 
-import java.io.File; 
-import java.io.BufferedReader; 
-import java.io.PrintWriter; 
-import java.io.InputStream; 
-import java.io.OutputStream; 
-import java.io.IOException; 
-
-public class SortStep extends PApplet {
-
-private int numInts = 100;
-private int largestInt = 100;
-private int [] myArray= new int[numInts];
-private Stopwatch watch = new Stopwatch();
-private Sorts mySorts = new Sorts();
-public void setup()
+public class Sorts
 {
-  bubbleSortTest();
-  selectionSortTest();
-  insertionSortTest();
-  mergeSortTest();
-}
-public void draw(){
-  //empty!
-}
-public void selectionSortTest()
-{
-  System.out.println("Testing Selection Sort");
-  fillArray(numInts, largestInt);
-  watch.reset();
-  watch.start();
-  mySorts.selectionSort(myArray);
-  watch.stop();
-  System.out.println("Selection Sort took " +watch.elapsedTime()/1000 + " microseconds");
-}
-public void bubbleSortTest()
-{
-  System.out.println("Testing Bubble Sort");
-  fillArray(numInts, largestInt);
-  watch.reset();
-  watch.start();
-  mySorts.bubbleSort(myArray);
-  watch.stop();
-  System.out.println("Bubble Sort took " +watch.elapsedTime()/1000 + " microseconds");
-}
-public void insertionSortTest()
-{
-  System.out.println("Testing Insertion Sort");
-  fillArray(numInts, largestInt);
-  watch.reset();
-  watch.start();
-  mySorts.insertionSort(myArray);
-  watch.stop();
-  System.out.println("Insertion Sort took " +watch.elapsedTime()/1000 + " microseconds");
-}
-public void mergeSortTest()
-{
-  System.out.println("Testing Merge Sort");
-  fillArray(numInts, largestInt);
-  watch.reset();
-  watch.start();
-  mySorts.mergeSort(myArray,0,myArray.length-1);
-  watch.stop();
-  System.out.println("Merge Sort took " +watch.elapsedTime()/1000 + " microseconds");
-}
-private void fillArray(int numInts, int largestInt)
-{
-  for (int loop = 0; loop < myArray.length; loop++)
+  public void bubbleSort(int[] list)
   {
-    myArray[loop] = (int)(Math.random()*largestInt + 1);
-  }
-}
-  static public void main(String[] passedArgs) {
-    String[] appletArgs = new String[] { "SortStep" };
-    if (passedArgs != null) {
-      PApplet.main(concat(appletArgs, passedArgs));
-    } else {
-      PApplet.main(appletArgs);
+    for(int j=0; j < list.length-1; j++)
+    {
+      for(int i=0; i < list.length-j-1; i++)
+      {
+        if(list[i] > list[i+1])
+        {
+          int blah = list[i];
+          list[i] = list[i+1];
+          list[i+1] = blah;
+        }
+      }
     }
+  }
+
+  public void selectionSort(int[] list)
+  {
+    int flag, blah;
+    for(int j=0; j < list.length-1; j++)
+    {
+      flag = j;
+      for(int i=j+1; i < list.length; i++)
+      {
+        if(list[i] < list[flag])
+        {
+          flag = i;
+        }
+      }
+      blah = list[j];
+      list[j] = list[flag];
+      list[flag] = blah;
+    }
+  }
+
+  public void insertionSort(int[] list)
+  {
+    for(int j=1; j < list.length; j++)
+    {
+      int pos = j;
+      int blah = list[pos];
+      while(pos > 0 && list[pos-1] > blah)
+      {
+        list[pos] = list[pos-1];
+        pos--;
+      }
+      list[pos] = blah;
+    }
+  }
+
+  private void merge(int[] a, int first, int mid, int last)
+  {
+    int [] c = new int[a.length];
+    int nA = first;
+    int nB = mid + 1;
+    for(int i = first; i <= last; i++)
+    {
+      if(nA > mid)
+      {
+        c[i] = a[nB];
+        nB++;
+      }
+      else if(nB > last)
+      {
+        c[i] = a[nA];
+        nA++;
+      }
+      else if(a[nA] > a[nB])
+      {
+        c[i] = a[nB];
+        nB++;
+      }
+      else
+      {
+        c[i] = a[nA];
+        nA++;
+      }
+    }
+    for(int i = first; i <= last; i++)
+    {
+      a[i] = c[i];
+    }
+  }
+
+  public void mergeSort(int[] a, int first, int last)
+  {
+    int mid = (first+last)/2;
+    if((first != mid) && (last != (mid+1)))
+    {
+      mergeSort(a, first, mid);
+      mergeSort(a, mid + 1, last);
+    }
+    merge(a, first, mid, last);
   }
 }
